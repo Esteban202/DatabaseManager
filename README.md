@@ -1,5 +1,5 @@
 # DatabaseManager.py
-A simple database manager using TKinter and SQLite3 python libraries. You can create, select and modify a database from it GUI. Its intended to be use to store users with a name, lastname and a e-mail.
+A simple database manager using TKinter and SQLite3 libraries. You can create, select and modify a database from it GUI. Its intended to be use to store users with a name, lastname and a e-mail.
 
 # Dependencies
 
