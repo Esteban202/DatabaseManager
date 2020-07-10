@@ -1,132 +1,13 @@
 import tkinter as tk
 import sqlite3
 import os
+from IncludeDatabase import include_database
+from AddDatabaseWindow import add_database_window
 
 current_database = ""
 
 def exit(root):
 	root.destroy()
-
-def include_database(first,last,email,currentDatabase):
-	def error_include():
-		error_include = tk.Tk()
-		error_include.title("Error")
-		error_include.resizable(False,False)
-		error_include_canvas = tk.Canvas(error_include,height=100,width=300)
-		error_include_canvas.pack()
-		error_include_frame = tk.Frame(error_include)
-		error_include_frame.place(relheight=1,relwidth=1)
-		error_include_label = tk.Label(error_include_frame,text="Please enter values for all the fields")
-		error_include_label.place(relx=0.5,rely=0.3,relheight=0.2,relwidth=1,anchor="n")
-		error_include_button = tk.Button(error_include_frame,text="OK",command=lambda: exit(error_include))
-		error_include_button.place(relx=0.5,rely=0.7,relheight=0.2,relwidth=0.3,anchor="n")
-		error_include.mainloop()
-
-	def data_updated(currentDatabase):
-		data_updated = tk.Tk()
-		data_updated.title("Updated Data")
-		data_updated.resizable(False,False)
-		data_updated_canvas = tk.Canvas(data_updated,height=100,width=300)
-		data_updated_canvas.pack()
-		data_updated_frame = tk.Frame(data_updated)
-		data_updated_frame.place(relheight=1,relwidth=1)
-		data_updated_label = tk.Label(data_updated_frame,text=f"Data in {currentDatabase} has been added")
-		data_updated_label.place(relx=0.5,rely=0.3,relheight=0.2,relwidth=1,anchor="n")
-		data_updated_button = tk.Button(data_updated_frame,text="OK",command=lambda: exit(data_updated))
-		data_updated_button.place(relx=0.5,rely=0.7,relheight=0.2,relwidth=0.3,anchor="n")
-		data_updated.mainloop()
-
-	def no_database():
-		no_database = tk.Tk()
-		no_database.title("Error")
-		no_database.resizable(False,False)
-		no_database_canvas = tk.Canvas(no_database,height=100,width=300)
-		no_database_canvas.pack()
-		no_database_frame = tk.Frame(no_database)
-		no_database_frame.place(relheight=1,relwidth=1)
-		no_database_label = tk.Label(no_database_frame,text=f"Please select a Database")
-		no_database_label.place(relx=0.5,rely=0.3,relheight=0.2,relwidth=1,anchor="n")
-		no_database_button = tk.Button(no_database_frame,text="OK",command=lambda: exit(no_database))
-		no_database_button.place(relx=0.5,rely=0.7,relheight=0.2,relwidth=0.3,anchor="n")
-		no_database.mainloop()
-
-	if first != "" and last != "" and email != "":
-		if currentDatabase != "":
-			conn = sqlite3.connect(f"{currentDatabase}")
-			c = conn.cursor()
-			with conn:
-				c.execute("INSERT INTO users VALUES(?,?,?)",(first,last,email))
-			data_updated(currentDatabase)
-		else:
-			no_database()
-	else:
-		error_include()
-
-def add_database_window():
-	
-	def accept_data_created():
-		accept = tk.Tk()
-		accept.title("Create Database")
-		accept.resizable(False,False)
-		accept_canvas = tk.Canvas(accept,height=100,width=200)
-		accept_canvas.pack()
-		accept_frame = tk.Frame(accept)
-		accept_frame.place(relheight=1,relwidth=1)
-		accept_label = tk.Label(accept_frame,text="Database created succesfully")
-		accept_label.place(relx=0.5,rely=0.3,relheight=0.2,relwidth=1,anchor="n")
-		accept_button = tk.Button(accept_frame,text="OK",command=lambda: exit(accept))
-		accept_button.place(relx=0.5,rely=0.7,relheight=0.2,relwidth=0.3,anchor="n")
-		accept.mainloop()
-
-	def error_data_created():
-		error = tk.Tk()
-		error.title("Create Database")
-		error.resizable(False,False)
-		error_canvas = tk.Canvas(error,height=100,width=300)
-		error_canvas.pack()
-		error_frame = tk.Frame(error)
-		error_frame.place(relheight=1,relwidth=1)
-		error_label = tk.Label(error_frame,text="Error! There is already a Database with that name.")
-		error_label.place(relx=0.5,rely=0.3,relheight=0.2,relwidth=1,anchor="n")
-		error_button = tk.Button(error_frame,text="OK",command=lambda: exit(error))
-		error_button.place(relx=0.5,rely=0.7,relheight=0.2,relwidth=0.3,anchor="n")
-		error.mainloop()
-
-	def create_database(Name):
-		try:
-			createdatabutton.config(state="normal")
-			conn = sqlite3.connect(f"{Name}.db")
-			c = conn.cursor()
-			with conn:
-				c.execute("""CREATE TABLE users(
-							first text,
-							last text,
-							email text
-						)""")
-			add_database_window.destroy()
-			accept_data_created()
-		except sqlite3.OperationalError:
-			error_data_created()
-
-	add_database_window = tk.Tk()
-	add_database_window.title("Create new Database")
-	add_database_window.resizable(False,False)
-	
-	canvas = tk.Canvas(add_database_window, height=100, width=300, bg="black")
-	canvas.pack()
-
-	database_name_entry = tk.Entry(add_database_window,font="Times")
-	database_name_entry.place(relx=0.7,rely=0.3,relheight=0.2,relwidth=0.55,anchor="n")
-
-	label = tk.Label(add_database_window,text="Name",font="Times",bg="#367800",fg="white")
-	label.place(relx=0.22,rely=0.3,relheight=0.2,relwidth=0.4,anchor="n")
-
-	create_button = tk.Button(add_database_window,text="Create",font="Times",command=lambda: create_database(database_name_entry.get()))
-	create_button.place(relx=0.3,rely=0.7,anchor="n",relheight=0.2,relwidth=0.4) 
-	back_button = tk.Button(add_database_window,text="Back",font="Times",command=lambda: [add_database_window.destroy(),createdatabutton.config(state="normal")])
-	back_button.place(relx=0.7,rely=0.7,anchor="n",relheight=0.2,relwidth=0.4) 
-
-	add_database_window.mainloop()
 
 def select_database_window():
 	
@@ -162,10 +43,10 @@ def select_database_window():
 	select_listbox.place(relx=0.5,rely=0.1,anchor="n")
 
 	select_button = tk.Button(select_database_window,text="Select",font="Times",command=lambda: [define_current_database(select_listbox.get(first=select_listbox.curselection(),last=None)),
-	selectdatabutton.config(state="normal"),show_current_database(current_database),select_database_window.destroy()])
+	show_current_database(current_database),select_database_window.destroy()])
 	select_button.place(relx=0.3,rely=0.7,anchor="n",relheight=0.1,relwidth=0.4)
 
-	back2_button = tk.Button(select_database_window,text="Back",font="Times",command=lambda: [select_database_window.destroy(),selectdatabutton.config(state="normal")])
+	back2_button = tk.Button(select_database_window,text="Back",font="Times",command=lambda: select_database_window.destroy())
 	back2_button.place(relx=0.7,rely=0.7,anchor="n",relheight=0.1,relwidth=0.4) 
 
 	select_database_window.mainloop()
